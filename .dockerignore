@@ -1,0 +1,15 @@
+.git
+.idea
+bin
+public/upload/**/*
+!public/upload/.htaccess
+schema
+tests
+vendor
+.gitattributes
+.gitignore
+.travis.yml
+*.bat
+box.json
+*.md
+phpunit.xml

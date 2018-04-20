@@ -1,0 +1,33 @@
+language: php
+dist: trusty
+
+services:
+  - mysql
+
+php:
+  - 5.6
+  - 7.0
+
+before_install:
+  - mysql -e 'CREATE DATABASE sufel_dev DEFAULT CHARACTER SET utf8;'
+
+before_script:
+  - mysql -u root sufel_dev < schema/schema.sql
+  - php bin/db/init-db.php
+  - composer self-update
+
+install:
+  - composer install --prefer-source --no-interaction --dev
+  - composer require php-coveralls/php-coveralls
+
+script:
+  - mkdir -p build/logs
+  - vendor/bin/phpunit --configuration phpunit.xml --coverage-clover build/logs/clover.xml
+
+after_success:
+  - travis_retry php vendor/bin/php-coveralls -v
+  - |
+    if [ -n "$TRAVIS_TAG" ]; then
+      chmod +x ./bin/box/deploy.sh
+      ./bin/deploy.sh;
+    fi
