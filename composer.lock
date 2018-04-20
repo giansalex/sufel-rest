@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "316ae852992961e605faf257c497846a",
+    "content-hash": "ede7980494bd13d87b89c6cef9c981c6",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -132,6 +132,54 @@
                 "sunat"
             ],
             "time": "2018-04-03T23:28:14+00:00"
+        },
+        {
+            "name": "giansalex/sufel",
+            "version": "dev-feature/package",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/giansalex/sufel.git",
+                "reference": "6542e0869e4778a9f27bc189f49640f0072dfe6f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/giansalex/sufel/zipball/6542e0869e4778a9f27bc189f49640f0072dfe6f",
+                "reference": "6542e0869e4778a9f27bc189f49640f0072dfe6f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pdo_mysql": "*",
+                "ext-zip": "*",
+                "giansalex/peru-consult": "^2.0",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=4.8 < 6.0",
+                "vimeo/psalm": "^0.3.64"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Sufel\\App\\": "src/app/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Giancarlos Salas",
+                    "email": "giansalex@gmail.com"
+                }
+            ],
+            "description": "Libreria para consulta de comprobantes electronicos",
+            "homepage": "http://github.com/giansalex/sufel",
+            "keywords": [
+                "facturacion-electronica",
+                "sufel"
+            ],
+            "time": "2018-04-20T22:50:55+00:00"
         },
         {
             "name": "katzgrau/klogger",
@@ -3036,7 +3084,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "giansalex/sufel": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
