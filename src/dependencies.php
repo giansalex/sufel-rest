@@ -16,6 +16,7 @@ use Sufel\App\Service\AuthClient;
 use Sufel\App\Service\ClientProfile;
 use Sufel\App\Service\CryptoService;
 use Sufel\App\Service\LinkGenerator;
+use Sufel\App\Service\RouterBuilderInterface;
 use Sufel\App\Service\UserValidateInterface;
 use Sufel\App\Utils\PdoErrorLogger;
 
@@ -45,8 +46,12 @@ $container[CryptoService::class] = function ($c) {
     return new CryptoService($c->get('settings')['jwt']['secret']);
 };
 
+$container[RouterBuilderInterface::class] = function ($c) {
+    return new \Sufel\App\Services\RouterBuilder($c->get('router'));
+};
+
 $container[LinkGenerator::class] = function ($c) {
-    return new LinkGenerator($c);
+    return new LinkGenerator($c->get(RouterBuilderInterface::class), $c->get(CryptoService::class));
 };
 
 $container[PdoErrorLogger::class] = function ($c) {
@@ -54,7 +59,7 @@ $container[PdoErrorLogger::class] = function ($c) {
 };
 
 $container[DbConnection::class] = function ($c) {
-    return new DbConnection($c);
+    return new DbConnection($c->get('settings')['db'], $c->get(PdoErrorLogger::class));
 };
 
 $container[CompanyRepository::class] = function ($c) {
