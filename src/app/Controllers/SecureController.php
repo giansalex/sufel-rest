@@ -3,102 +3,77 @@
  * Created by PhpStorm.
  * User: Giansalex
  * Date: 27/08/2017
- * Time: 14:11
+ * Time: 14:11.
  */
 
 namespace Sufel\App\Controllers;
 
-use Firebase\JWT\JWT;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
-use Sufel\App\Repository\CompanyRepository;
-use Sufel\App\Repository\DocumentRepository;
 use Sufel\App\Utils\Validator;
+use Sufel\App\ViewModels\DocumentLogin;
 
 /**
- * Class SecureController
- * @package Sufel\App\Controllers
+ * Class SecureController.
  */
 class SecureController
 {
     /**
-     * @var string
+     * @var SecureApiInterface
      */
-    private $secret;
-
-    protected $container;
+    private $api;
 
     /**
      * SecureController constructor.
-     * @param ContainerInterface $container
+     *
+     * @param SecureApiInterface $api
      */
-    public function __construct(ContainerInterface $container) {
-        $this->secret = $container['settings']['jwt']['secret'];
-        $this->container = $container;
+    public function __construct(SecureApiInterface $api)
+    {
+        $this->api = $api;
     }
 
     /**
-     * @param ServerRequestInterface    $request
-     * @param Response                  $response
-     * @param array $args
+     * @param ServerRequestInterface $request
+     * @param Response               $response
+     * @param array                  $args
+     *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function client($request, $response, $args) {
+    public function client($request, $response, $args)
+    {
         $params = $request->getParsedBody();
         if (!Validator::existFields($params, ['emisor', 'tipo', 'documento', 'fecha', 'total'])) {
             return $response->withStatus(400);
         }
-        $arr = explode('-', $params['documento']);
-        if (count($arr) != 2) {
-            return $response->withJson(['message' => 'documento inválido'],400);
-        }
-        $params['serie'] = $arr[0];
-        $params['correlativo'] = $arr[1];
 
-        $repo = $this->container->get(DocumentRepository::class);
-        $id = $repo->isAuthorized($params);
-        if ($id === FALSE) {
-            return $response->withJson(['message' => 'documento no encontrado'], 404);
-        }
+        $login = new DocumentLogin();
+        $login->setEmisor($params['emisor'])
+            ->setTipo($params['tipo'])
+            ->setCorrelativo($params['documento'])
+            ->setFecha(new \DateTime($params['fecha']))
+            ->setTotal(floatval($params['totel']));
 
-        $exp = strtotime('+5 hours');
-        $data = [
-            'scope' => ['document'],
-            'doc' => $id,
-            'exp' => $exp,
-        ];
+        $result = $this->api->client($login);
 
-        $token = JWT::encode($data, $this->secret);
-        return $response->withJson(['token' => $token, 'expire' => $exp]);
+        return $response->withJson($result->getData(), $result->getStatusCode());
     }
 
     /**
-     * @param ServerRequestInterface    $request
-     * @param Response                  $response
-     * @param array $args
+     * @param ServerRequestInterface $request
+     * @param Response               $response
+     * @param array                  $args
+     *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function company($request, $response, $args) {
+    public function company($request, $response, $args)
+    {
         $params = $request->getParsedBody();
         if (!Validator::existFields($params, ['ruc', 'password'])) {
             return $response->withStatus(400);
         }
+        $result = $this->api->company($params['ruc'], $params['password']);
 
-        $repo = $this->container->get(CompanyRepository::class);
-        $valid = $repo->isAuthorized($params['ruc'], $params['password']);
-        if (!$valid) {
-            return $response->withJson(['message' => 'credenciales inválidas'], 400);
-        }
-
-        $exp = strtotime('+2 days');
-        $data = [
-            'scope' => ['company'],
-            'ruc' => $params['ruc'],
-            'exp' => $exp,
-        ];
-
-        $token = JWT::encode($data, $this->secret);
-        return $response->withJson(['token' => $token, 'expire' => $exp]);
+        return $response->withJson($result->getData(), $result->getStatusCode());
     }
 }

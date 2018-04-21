@@ -8,11 +8,9 @@
 
 namespace Sufel\App\Controllers;
 
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
-use Sufel\App\Repository\DocumentRepository;
-use Sufel\App\Service\CryptoService;
+use Sufel\App\Models\ApiResult;
 
 /**
  * Class ExternalFileController.
@@ -20,18 +18,18 @@ use Sufel\App\Service\CryptoService;
 class ExternalFileController
 {
     /**
-     * @var ContainerInterface
+     * @var ExternalFileApiInterface
      */
-    private $container;
+    private $api;
 
     /**
-     * CompanyController constructor.
+     * ExternalFileController constructor.
      *
-     * @param ContainerInterface $container
+     * @param ExternalFileApiInterface $api
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ExternalFileApiInterface $api)
     {
-        $this->container = $container;
+        $this->api = $api;
     }
 
     /**
@@ -51,44 +49,25 @@ class ExternalFileController
         if (!in_array($type, ['xml', 'pdf'])) {
             return $response->withStatus(404);
         }
+        $result = $this->api->download($hash, $type);
 
-        $cryp = $this->container->get(CryptoService::class);
-        $res = $cryp->decrypt($hash);
-        if ($res === false) {
-            return $response->withStatus(404);
-        }
-        $obj = json_decode($res);
-        $repo = $this->container->get(DocumentRepository::class);
-        $doc = $repo->get($obj->id);
-        if ($doc === null) {
-            return $response->withStatus(404);
+        return $this->setFileResponse($response, $result);
+    }
+
+    private function setFileResponse(Response $response, ApiResult $result)
+    {
+        if ($result->getStatusCode() != 200) {
+            return $response->withStatus($result->getStatusCode());
         }
 
-        $name = $doc['filename'];
-        $uploadDir = $this->container->get('settings')['upload_dir'];
-
-        $pathZip = $uploadDir.DIRECTORY_SEPARATOR.$doc['emisor'].DIRECTORY_SEPARATOR.$name.'.zip';
-        $zip = new \ZipArchive();
-        $zip->open($pathZip);
-
-        $result = [];
-        if ($type == 'xml') {
-            $result['file'] = $zip->getFromName($name.'.xml');
-            $result['type'] = 'application/xml';
-        } else {
-            $result['file'] = $zip->getFromName($name.'.pdf');
-            $result['type'] = 'application/pdf';
+        if (!empty($result->getHeaders())) {
+            foreach ($result->getHeaders() as $key => $value) {
+                $response = $response->withHeader($key, $value);
+            }
         }
-        $zip->close();
 
         $response->getBody()->write($result['file']);
 
-        return $response
-            ->withHeader('Content-Type', $result['type'])
-            ->withHeader('Content-Disposition', "attachment; filename=\"$name.$type\";")
-            ->withHeader('Content-Length', strlen($result['file']))
-            ->withoutHeader('Pragma')
-            ->withoutHeader('Expires')
-            ->withoutHeader('Cache-Control');
+        return $response;
     }
 }
