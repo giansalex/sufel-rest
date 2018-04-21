@@ -23,18 +23,17 @@ use Sufel\App\ViewModels\FilterViewModel;
 class ClientController
 {
     /**
-     * @var ContainerInterface
+     * @var ClientApiInterface
      */
-    private $container;
+    private $api;
 
     /**
-     * CompanyController constructor.
-     *
-     * @param ContainerInterface $container
+     * ClientController constructor.
+     * @param ClientApiInterface $api
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ClientApiInterface $api)
     {
-        $this->container = $container;
+        $this->api = $api;
     }
 
     /**
@@ -51,8 +50,8 @@ class ClientController
         $jwt = $request->getAttribute('jwt');
         $document = $jwt->document;
 
-        $repository = $this->container->get(ClienteRepository::class);
-        $docs = $repository->getCompanies($document);
+        $result = $this->api->getCompanies($document);
+        $docs = $result->getData();
 
         return $response->withJson($docs);
     }
@@ -88,8 +87,8 @@ class ClientController
             ->setFecInicio($init)
             ->setFecFin($end);
 
-        $repository = $this->container->get(DocumentFilterRepository::class);
-        $docs = $repository->getList($filter);
+        $result = $this->api->getList($filter);
+        $docs = $result->getData();
 
         return $response->withJson($docs);
     }
@@ -107,12 +106,9 @@ class ClientController
     {
         $id = $args['id'];
         $type = $args['type'];
-        if (!in_array($type, ['info', 'xml', 'pdf'])) {
-            return $response->withStatus(404);
-        }
-
         $jwt = $request->getAttribute('jwt');
         $document = $jwt->document;
+        $result = $this->api->getDocument($jwt->document, $id, $type);
 
         $repository = $this->container->get(DocumentRepository::class);
         $doc = $repository->get($id);
