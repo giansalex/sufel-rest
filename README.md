@@ -1,4 +1,4 @@
-# Sufel
+# Sufel Api
 
 [![Travis-CI](https://travis-ci.org/giansalex/sufel-rest.svg?branch=master)](https://travis-ci.org/giansalex/sufel-rest)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/e70674827113495b83d1c79b1affb427)](https://www.codacy.com/app/giansalex/sufel-rest?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=giansalex/sufel-rest&amp;utm_campaign=Badge_Grade)  
@@ -7,7 +7,7 @@ Api de consultas para receptores de Facturación Electrónica en Perú según no
 Basado en [Sufel](https://github.com/giansalex/sufel) package.
 
 ## Características
-- Publicar el xml y pdf .
+- Publicar el xml y pdf.
 - Es Multi-Empresa
 - Consulta individual de comprobantes empleando datos como el ruc del emisor, tipo, serie, correlativo, fecha y total del comprobante.
 - Descarga del comrobante en formato xml y pdf.
