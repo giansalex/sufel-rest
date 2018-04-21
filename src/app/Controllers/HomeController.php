@@ -75,7 +75,8 @@ HTML;
      */
     public function swagger($request, $response, $args)
     {
-        $type = $request->getQueryParams()['for'];
+        $params = $request->getQueryParams();
+        $type = isset($params['for']) ? $params['for'] : '';
 
         $name = 'swagger';
         if ($type &&
