@@ -8,10 +8,9 @@
 
 namespace Sufel\App\Controllers;
 
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
-use Sufel\App\Repository\DocumentRepository;
+use Sufel\App\Models\ApiResult;
 
 /**
  * Class DocumentController.
@@ -19,27 +18,18 @@ use Sufel\App\Repository\DocumentRepository;
 class DocumentController
 {
     /**
-     * @var DocumentRepository
+     * @var DocumentApiInterface
      */
-    private $repository;
+    private $api;
 
     /**
-     * @var string
-     */
-    private $rootDir;
-
-    /**
-     * CompanyController constructor.
+     * DocumentController constructor.
      *
-     * @param ContainerInterface $container
-     *
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @param DocumentApiInterface $api
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(DocumentApiInterface $api)
     {
-        $this->repository = $container->get(DocumentRepository::class);
-        $this->rootDir = $container->get('settings')['upload_dir'];
+        $this->api = $api;
     }
 
     /**
@@ -59,37 +49,25 @@ class DocumentController
         $jwt = $request->getAttribute('jwt');
         $id = $jwt->doc;
 
-        $doc = $this->repository->get($id);
-        if ($doc === null) {
-            return $response->withStatus(404);
-        }
-        if ($type == 'info') {
-            return $response->withJson($doc);
+        $result = $this->api->getDocument($id, $type);
+
+        return $this->setFileResponse($response, $result);
+    }
+
+    private function setFileResponse(Response $response, ApiResult $result)
+    {
+        if ($result->getStatusCode() != 200) {
+            return $response->withStatus($result->getStatusCode());
         }
 
-        $name = $doc['filename'];
-        $pathZip = $this->rootDir.DIRECTORY_SEPARATOR.$doc['emisor'].DIRECTORY_SEPARATOR.$name.'.zip';
-        $zip = new \ZipArchive();
-        $zip->open($pathZip);
-
-        $result = [];
-        if ($type == 'xml') {
-            $result['file'] = $zip->getFromName($name.'.xml');
-            $result['type'] = 'text/xml';
-        } else {
-            $result['file'] = $zip->getFromName($name.'.pdf');
-            $result['type'] = 'application/pdf';
+        if (!empty($result->getHeaders())) {
+            foreach ($result->getHeaders() as $key => $value) {
+                $response = $response->withHeader($key, $value);
+            }
         }
-        $zip->close();
 
         $response->getBody()->write($result['file']);
 
-        return $response
-            ->withHeader('Content-Type', $result['type'])
-            ->withHeader('Content-Disposition', 'attachment')
-            ->withHeader('Content-Length', strlen($result['file']))
-            ->withoutHeader('Pragma')
-            ->withoutHeader('Expires')
-            ->withoutHeader('Cache-Control');
+        return $response;
     }
 }
