@@ -10,33 +10,32 @@ namespace Sufel\App\Controllers;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
-use Sufel\App\Service\ClientProfile;
 use Sufel\App\Utils\Validator;
 
 /**
- * Class ClientProfileController
+ * Class ClientProfileController.
  */
 class ClientProfileController
 {
     /**
-     * @var ClientProfile
+     * @var ClientProfileApiInterface
      */
-    private $profile;
+    private $api;
 
     /**
      * ClientProfileController constructor.
      *
-     * @param ClientProfile $profile
+     * @param ClientProfileApiInterface $api
      */
-    public function __construct(ClientProfile $profile)
+    public function __construct(ClientProfileApiInterface $api)
     {
-        $this->profile = $profile;
+        $this->api = $api;
     }
 
     /**
      * @param ServerRequestInterface $request
-     * @param Response $response
-     * @param array $args
+     * @param Response               $response
+     * @param array                  $args
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
@@ -47,14 +46,14 @@ class ClientProfileController
             return $response->withStatus(400);
         }
         $jwt = $request->getAttribute('jwt');
-        list($success, $message) = $this->profile->changePassword(
-            $jwt->document,
+
+        $result = $this->api->changePassword($jwt->document,
             $params['old'],
             $params['new'],
             $params['repeat']);
 
-        if ($success === false) {
-            return $response->withJson(['message' => empty($message) ? 'No se pudo cambiar la contraseña' : $message], 400);
+        if ($result->getStatusCode() !== 200) {
+            return $response->withJson($result->getData(), $result->getStatusCode());
         }
 
         return $response;
