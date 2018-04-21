@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: Giansalex
  * Date: 26/08/2017
- * Time: 18:25
+ * Time: 18:25.
  */
 
 namespace Sufel\App\Controllers;
@@ -12,11 +12,10 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Router;
-use Sufel\App\Service\LinkGenerator;
+use Sufel\App\Services\PathResolver;
 
 /**
- * Class HomeController
- * @package Sufel\App\Controllers
+ * Class HomeController.
  */
 class HomeController
 {
@@ -27,6 +26,7 @@ class HomeController
 
     /**
      * HomeController constructor.
+     *
      * @param ContainerInterface $container
      */
     public function __construct(ContainerInterface $container)
@@ -36,19 +36,21 @@ class HomeController
 
     /**
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param array $args
+     * @param ResponseInterface      $response
+     * @param array                  $args
+     *
      * @return \Psr\Http\Message\ResponseInterface
+     *
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function home($request, $response, $args)
     {
-        $gen = $this->container->get(LinkGenerator::class);
-        /**@var $router Router */
+        $gen = $this->container->get(PathResolver::class);
+        /** @var $router Router */
         $router = $this->container->get('router');
 
-        $swaggerUrl = $gen->getBasePath() . $router->pathFor('swagger');
+        $swaggerUrl = $gen->getBasePath().$router->pathFor('swagger');
         $body = <<<HTML
 <h1>Welcome to SUFEL API</h1>
 <a href="http://petstore.swagger.io/?url=$swaggerUrl">Swagger API Full</a><br>
@@ -63,9 +65,11 @@ HTML;
 
     /**
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param array $args
+     * @param ResponseInterface      $response
+     * @param array                  $args
+     *
      * @return \Psr\Http\Message\ResponseInterface
+     *
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
@@ -75,16 +79,16 @@ HTML;
 
         $name = 'swagger';
         if ($type &&
-            in_array(strtolower($type),['company', 'receiver'])) {
+            in_array(strtolower($type), ['company', 'receiver'])) {
             $name .= '.'.strtolower($type);
         }
 
-        $filename = __DIR__ . "/../../data/$name.json";
+        $filename = __DIR__."/../../data/$name.json";
         if (!file_exists($filename)) {
             return $response->withStatus(404);
         }
         $jsonContent = file_get_contents($filename);
-        $gen = $this->container->get(LinkGenerator::class);
+        $gen = $this->container->get(PathResolver::class);
         $response->getBody()->write(str_replace('sufel.net', $gen->getFullBasePath(), $jsonContent));
 
         return $response->withHeader('Content-Type', 'application/json; charset=utf8');

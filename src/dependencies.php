@@ -25,6 +25,7 @@ use Sufel\App\Service\CryptoService;
 use Sufel\App\Service\LinkGenerator;
 use Sufel\App\Service\RouterBuilderInterface;
 use Sufel\App\Service\UserValidateInterface;
+use Sufel\App\Services\PathResolver;
 use Sufel\App\Utils\PdoErrorLogger;
 
 $container = $app->getContainer();
@@ -59,6 +60,10 @@ $container[RouterBuilderInterface::class] = function ($c) {
 
 $container[LinkGenerator::class] = function ($c) {
     return new LinkGenerator($c->get(RouterBuilderInterface::class), $c->get(CryptoService::class));
+};
+
+$container[PathResolver::class] = function ($c) {
+    return new PathResolver($c);
 };
 
 $container[PdoErrorLogger::class] = function ($c) {
