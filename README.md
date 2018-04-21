@@ -1,10 +1,10 @@
 # Sufel
 
-[![Travis-CI](https://travis-ci.org/giansalex/sufel.svg?branch=master)](https://travis-ci.org/giansalex/sufel)
-[![Coverage Status](https://coveralls.io/repos/github/giansalex/sufel/badge.svg?branch=master)](https://coveralls.io/github/giansalex/sufel?branch=master)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/87a24796afc94e7ea79f3f5f99a95f7c)](https://www.codacy.com/app/giansalex/sufel?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=giansalex/sufel&amp;utm_campaign=Badge_Grade)  
+[![Travis-CI](https://travis-ci.org/giansalex/sufel-rest.svg?branch=master)](https://travis-ci.org/giansalex/sufel-rest)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e70674827113495b83d1c79b1affb427)](https://www.codacy.com/app/giansalex/sufel-rest?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=giansalex/sufel-rest&amp;utm_campaign=Badge_Grade)  
 
-Api de consultas para receptores de Facturación Electrónica en Perú según normativa de Superintendencia Nacional de Aduanas y de Administración Tributaria (SUNAT).
+Api de consultas para receptores de Facturación Electrónica en Perú según normativa de Superintendencia Nacional de Aduanas y de Administración Tributaria (SUNAT).  
+Basado en [Sufel](https://github.com/giansalex/sufel) package.
 
 ## Características
 - Publicar el xml y pdf .
@@ -18,9 +18,9 @@ Api de consultas para receptores de Facturación Electrónica en Perú según no
 Una implementación basada en Angular 5 [SUFEL Angular](https://github.com/giansalex/sufel-angular)  
 
 ## API Docs
-- [Swagger Docs Full](http://petstore.swagger.io/?url=https://raw.githubusercontent.com/giansalex/sufel/master/src/data/swagger.json)  
-- [Swagger for Company](http://editor.swagger.io/?url=https://raw.githubusercontent.com/giansalex/sufel/master/src/data/swagger.company.json)
-- [Swagger for Consult](http://editor.swagger.io/?url=https://raw.githubusercontent.com/giansalex/sufel/master/src/data/swagger.receiver.json)
+- [Swagger Docs Full](http://petstore.swagger.io/?url=https://raw.githubusercontent.com/giansalex/sufel-rest/master/src/data/swagger.json)  
+- [Swagger for Company](http://editor.swagger.io/?url=https://raw.githubusercontent.com/giansalex/sufel-rest/master/src/data/swagger.company.json)
+- [Swagger for Consult](http://editor.swagger.io/?url=https://raw.githubusercontent.com/giansalex/sufel-rest/master/src/data/swagger.receiver.json)
 ## Docker
 
 Disponible en [Docker Hub](https://hub.docker.com/r/giansalex/sufel/)
