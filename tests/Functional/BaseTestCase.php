@@ -110,14 +110,14 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
 
     private function checkServerError(ResponseInterface $response)
     {
-        if (!in_array($response->getStatusCode(), [500, 400])) {
+        if ($response->getStatusCode() !== 500) {
             return;
         }
 
         $content = (string)$response->getBody();
 
         if ($this->isWindows()) {
-            $tmp = sys_get_temp_dir() . PATH_SEPARATOR . time() . '.html';
+            $tmp = sys_get_temp_dir() . '/' . time() . '.html';
             file_put_contents($tmp, $content);
             exec('start ' . $tmp);
             return;
