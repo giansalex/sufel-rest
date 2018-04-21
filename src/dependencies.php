@@ -4,13 +4,20 @@
 
 use Peru\Http\ClientInterface;
 use Peru\Sunat\UserValidator;
+use Sufel\App\Controllers\ClientController;
 use Sufel\App\Controllers\ClientProfileController;
+use Sufel\App\Controllers\ClientSecureController;
+use Sufel\App\Controllers\CompanyController;
+use Sufel\App\Controllers\DocumentController;
+use Sufel\App\Controllers\ExternalFileController;
+use Sufel\App\Controllers\SecureController;
 use Sufel\App\Repository\ClienteRepository;
 use Sufel\App\Repository\ClientProfileRepository;
 use Sufel\App\Repository\CompanyRepository;
 use Sufel\App\Repository\DbConnection;
 use Sufel\App\Repository\DocumentFilterRepository;
 use Sufel\App\Repository\DocumentRepository;
+use Sufel\App\Repository\FileRepository;
 use Sufel\App\Repository\Query\QueryJoiner;
 use Sufel\App\Service\AuthClient;
 use Sufel\App\Service\ClientProfile;
@@ -63,7 +70,7 @@ $container[DbConnection::class] = function ($c) {
 };
 
 $container[CompanyRepository::class] = function ($c) {
-    return new CompanyRepository($c);
+    return new CompanyRepository($c->get(DbConnection::class));
 };
 
 $container[DocumentRepository::class] = function ($c) {
@@ -71,14 +78,18 @@ $container[DocumentRepository::class] = function ($c) {
 };
 
 $container[ClienteRepository::class] = function ($c) {
-    return new ClienteRepository($c);
+    return new ClienteRepository($c->get(DbConnection::class));
 };
 
 $container[ClientProfileRepository::class] = function ($c) {
-    return new ClientProfileRepository($c);
+    return new ClientProfileRepository($c->get(DbConnection::class));
 };
 
-$container[QueryJoiner::class] = function ($c) {
+$container[FileRepository::class] = function ($c) {
+    return new FileRepository($c->get('settings')['upload_dir'], $c->get(DocumentRepository::class));
+};
+
+$container[QueryJoiner::class] = function () {
     return new QueryJoiner();
 };
 
@@ -108,6 +119,54 @@ $container[ClientProfile::class] = function ($c) {
     return new ClientProfile($c->get(ClienteRepository::class), $c->get(ClientProfileRepository::class));
 };
 
+$container[ClientController::class] = function ($c) {
+    $api = new \Sufel\App\Controllers\ClientApi(
+        $c->get(ClienteRepository::class),
+        $c->get(DocumentFilterRepository::class),
+        $c->get(DocumentRepository::class),
+        $c->get(FileRepository::class)
+    );
+
+    return new ClientController($api);
+};
+
 $container[ClientProfileController::class] = function ($c) {
-    return new ClientProfileController($c->get(ClientProfile::class));
+    $api = new \Sufel\App\Controllers\ClientProfileApi($c->get(ClientProfile::class));
+
+    return new ClientProfileController($api);
+};
+
+$container[ClientSecureController::class] = function ($c) {
+    $api = new \Sufel\App\Controllers\ClientSecureApi($c->get('settings')['jwt']['secret'], $c->get(AuthClient::class));
+
+    return new ClientSecureController($api);
+};
+
+$container[CompanyController::class] = function ($c) {
+    $api = new \Sufel\App\Controllers\CompanyApi(
+        $c->get(CompanyRepository::class),
+        $c->get(DocumentRepository::class),
+        $c->get(LinkGenerator::class),
+        $c->get(FileRepository::class)
+    );
+
+    return new CompanyController($api, $c->get('settings')['token_admin']);
+};
+
+$container[DocumentController::class] = function ($c) {
+    $api = new \Sufel\App\Controllers\DocumentApi($c->get(DocumentRepository::class), $c->get(FileRepository::class));
+
+    return new DocumentController($api);
+};
+
+$container[ExternalFileController::class] = function ($c) {
+    $api = new \Sufel\App\Controllers\ExternalFileApi($c->get(CryptoService::class), $c->get(DocumentRepository::class), $c->get(FileRepository::class));
+
+    return new ExternalFileController($api);
+};
+
+$container[SecureController::class] = function ($c) {
+    $api = new \Sufel\App\Controllers\SecureApi($c->get('settings')['jwt']['secret'], $c->get(DocumentRepository::class), $c->get(CompanyRepository::class));
+
+    return new SecureController($api);
 };
