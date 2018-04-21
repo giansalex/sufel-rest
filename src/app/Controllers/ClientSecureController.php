@@ -8,11 +8,8 @@
 
 namespace Sufel\App\Controllers;
 
-use Firebase\JWT\JWT;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
-use Sufel\App\Service\AuthClient;
 use Sufel\App\Utils\Validator;
 use Sufel\App\ViewModels\ClientRegister;
 
@@ -22,27 +19,24 @@ use Sufel\App\ViewModels\ClientRegister;
 class ClientSecureController
 {
     /**
-     * @var string
+     * @var ClientSecureApiInterface
      */
-    private $secret;
-
-    protected $container;
+    private $api;
 
     /**
-     * SecureController constructor.
+     * ClientSecureController constructor.
      *
-     * @param ContainerInterface $container
+     * @param ClientSecureApiInterface $api
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ClientSecureApiInterface $api)
     {
-        $this->secret = $container['settings']['jwt']['secret'];
-        $this->container = $container;
+        $this->api = $api;
     }
 
     /**
      * @param ServerRequestInterface $request
-     * @param Response $response
-     * @param array $args
+     * @param Response               $response
+     * @param array                  $args
      *
      * @return \Psr\Http\Message\ResponseInterface
      *
@@ -55,29 +49,15 @@ class ClientSecureController
         if (!Validator::existFields($params, ['documento', 'password'])) {
             return $response->withStatus(400);
         }
+        $result = $this->api->login($params['documento'], $params['password']);
 
-        $service = $this->container->get(AuthClient::class);
-        list($success) = $service->login($params['documento'], $params['password']);
-        if ($success === false) {
-            return $response->withJson(['message' => 'credenciales inválidas'], 400);
-        }
-
-        $exp = strtotime('+5 hours');
-        $data = [
-            'scope' => ['client'],
-            'document' => $params['documento'],
-            'exp' => $exp,
-        ];
-
-        $token = JWT::encode($data, $this->secret);
-
-        return $response->withJson(['token' => $token, 'expire' => $exp]);
+        return $response->withJson($result->getData(), $result->getStatusCode());
     }
 
     /**
      * @param ServerRequestInterface $request
-     * @param Response $response
-     * @param array $args
+     * @param Response               $response
+     * @param array                  $args
      *
      * @return \Psr\Http\Message\ResponseInterface
      *
@@ -98,12 +78,8 @@ class ClientSecureController
             ->setPassword($params['password'])
             ->setRepeatPassword($params['repeat_password']);
 
-        $service = $this->container->get(AuthClient::class);
-        list($success, $message) = $service->register($client);
-        if ($success === false) {
-            return $response->withJson(['message' => empty($message) ? 'No se pudo registrar' : $message], 400);
-        }
+        $result = $this->api->register($client);
 
-        return $response;
+        return $response->withJson($result->getData(), $result->getStatusCode());
     }
 }
