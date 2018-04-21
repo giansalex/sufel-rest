@@ -10,7 +10,7 @@ namespace Sufel\App\Controllers;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
-use Sufel\App\Models\ApiResult;
+use Sufel\App\Utils\FileResponseTrait;
 use Sufel\App\Utils\Validator;
 use Sufel\App\ViewModels\FilterViewModel;
 
@@ -19,6 +19,8 @@ use Sufel\App\ViewModels\FilterViewModel;
  */
 class ClientController
 {
+    use FileResponseTrait;
+
     /**
      * @var ClientApiInterface
      */
@@ -111,22 +113,5 @@ class ClientController
         $result = $this->api->getDocument($jwt->document, $id, $type);
 
         return $this->setFileResponse($response, $result);
-    }
-
-    private function setFileResponse(Response $response, ApiResult $result)
-    {
-        if ($result->getStatusCode() != 200) {
-            return $response->withStatus($result->getStatusCode());
-        }
-
-        if (!empty($result->getHeaders())) {
-            foreach ($result->getHeaders() as $key => $value) {
-                $response = $response->withHeader($key, $value);
-            }
-        }
-
-        $response->getBody()->write($result['file']);
-
-        return $response;
     }
 }
