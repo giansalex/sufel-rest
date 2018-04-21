@@ -8,12 +8,9 @@
 
 namespace Sufel\App\Controllers;
 
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
-use Sufel\App\Repository\ClienteRepository;
-use Sufel\App\Repository\DocumentFilterRepository;
-use Sufel\App\Repository\DocumentRepository;
+use Sufel\App\Models\ApiResult;
 use Sufel\App\Utils\Validator;
 use Sufel\App\ViewModels\FilterViewModel;
 
@@ -29,6 +26,7 @@ class ClientController
 
     /**
      * ClientController constructor.
+     *
      * @param ClientApiInterface $api
      */
     public function __construct(ClientApiInterface $api)
@@ -38,10 +36,11 @@ class ClientController
 
     /**
      * @param ServerRequestInterface $request
-     * @param Response $response
-     * @param array $args
+     * @param Response               $response
+     * @param array                  $args
      *
      * @return \Psr\Http\Message\ResponseInterface
+     *
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
@@ -58,10 +57,11 @@ class ClientController
 
     /**
      * @param ServerRequestInterface $request
-     * @param Response $response
-     * @param array $args
+     * @param Response               $response
+     * @param array                  $args
      *
      * @return \Psr\Http\Message\ResponseInterface
+     *
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
@@ -95,10 +95,11 @@ class ClientController
 
     /**
      * @param ServerRequestInterface $request
-     * @param Response $response
-     * @param array $args
+     * @param Response               $response
+     * @param array                  $args
      *
      * @return \Psr\Http\Message\ResponseInterface
+     *
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
@@ -107,47 +108,25 @@ class ClientController
         $id = $args['id'];
         $type = $args['type'];
         $jwt = $request->getAttribute('jwt');
-        $document = $jwt->document;
         $result = $this->api->getDocument($jwt->document, $id, $type);
 
-        $repository = $this->container->get(DocumentRepository::class);
-        $doc = $repository->get($id);
-        if ($doc === null) {
-            return $response->withStatus(404);
+        return $this->setFileResponse($response, $result);
+    }
+
+    private function setFileResponse(Response $response, ApiResult $result)
+    {
+        if ($result->getStatusCode() != 200) {
+            return $response->withStatus($result->getStatusCode());
         }
 
-        if ($doc['cliente_doc'] !== $document) {
-            return $response->withStatus(401);
+        if (!empty($result->getHeaders())) {
+            foreach ($result->getHeaders() as $key => $value) {
+                $response = $response->withHeader($key, $value);
+            }
         }
-
-        if ($type == 'info') {
-            return $response->withJson($doc);
-        }
-
-        $name = $doc['filename'];
-        $rootDir = $this->container->get('settings')['upload_dir'];
-        $pathZip = $rootDir . DIRECTORY_SEPARATOR . $doc['emisor'] . DIRECTORY_SEPARATOR . $name . '.zip';
-        $zip = new \ZipArchive();
-        $zip->open($pathZip);
-
-        $result = [];
-        if ($type == 'xml') {
-            $result['file'] = $zip->getFromName($name.'.xml');
-            $result['type'] = 'text/xml';
-        } else {
-            $result['file'] = $zip->getFromName($name.'.pdf');
-            $result['type'] = 'application/pdf';
-        }
-        $zip->close();
 
         $response->getBody()->write($result['file']);
 
-        return $response
-            ->withHeader('Content-Type', $result['type'])
-            ->withHeader('Content-Disposition', 'attachment')
-            ->withHeader('Content-Length', strlen($result['file']))
-            ->withoutHeader('Pragma')
-            ->withoutHeader('Expires')
-            ->withoutHeader('Cache-Control');
+        return $response;
     }
 }
