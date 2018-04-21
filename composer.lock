@@ -139,12 +139,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/giansalex/sufel.git",
-                "reference": "6542e0869e4778a9f27bc189f49640f0072dfe6f"
+                "reference": "b6458c5818187f546905ac7ef48738b3f4f7d0a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giansalex/sufel/zipball/6542e0869e4778a9f27bc189f49640f0072dfe6f",
-                "reference": "6542e0869e4778a9f27bc189f49640f0072dfe6f",
+                "url": "https://api.github.com/repos/giansalex/sufel/zipball/b6458c5818187f546905ac7ef48738b3f4f7d0a6",
+                "reference": "b6458c5818187f546905ac7ef48738b3f4f7d0a6",
                 "shasum": ""
             },
             "require": {
@@ -179,7 +179,7 @@
                 "facturacion-electronica",
                 "sufel"
             ],
-            "time": "2018-04-20T22:50:55+00:00"
+            "time": "2018-04-21T03:40:51+00:00"
         },
         {
             "name": "katzgrau/klogger",
