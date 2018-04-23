@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-cd ../..
 rm -rf dist
 cp box2/settings.php src/settings.php
 rm -rf vendor
