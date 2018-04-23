@@ -310,7 +310,7 @@
         ]
       }
     },
-    "/company": {
+    "/companies": {
       "post": {
         "tags": [
           "company"
