@@ -42,15 +42,14 @@ class ClientProfileController
     public function changePassword($request, $response, $args)
     {
         $params = $request->getParsedBody();
-        if (!Validator::existFields($params, ['old', 'new', 'repeat'])) {
+        if (!Validator::existFields($params, ['old', 'new'])) {
             return $response->withStatus(400);
         }
         $jwt = $request->getAttribute('jwt');
 
         $result = $this->api->changePassword($jwt->document,
             $params['old'],
-            $params['new'],
-            $params['repeat']);
+            $params['new']);
 
         if ($result->getStatusCode() !== 200) {
             return $response->withJson($result->getData(), $result->getStatusCode());
