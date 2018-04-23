@@ -27,5 +27,6 @@ after_success:
   - |
     if [ -n "$TRAVIS_TAG" ]; then
       chmod +x ./bin/box/deploy.sh
-      ./bin/deploy.sh;
+      cd bin/box
+      ./deploy.sh;
     fi
