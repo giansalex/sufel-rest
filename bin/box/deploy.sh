@@ -1,8 +1,5 @@
 #!/usr/bin/env sh
 ./bin/box/box_build.sh
-ZIP_ASSET=sufel.phar.zip
+ZIP_ASSET=./sufel.phar.zip
 php ./bin/box/zip.php $ZIP_ASSET $PWD/dist
-USER=giansalex
-REPO=sufel-rest
-GH_ASSET="https://uploads.github.com/repos/$USER/$REPO/releases/$TRAVIS_TAG/assets?name=$ZIP_ASSET"
-curl --data-binary @"./$ZIP_ASSET" -H "Authorization: token $GITHUB_TOKEN" -H "Content-Type: application/zip" $GH_ASSET
+./bin/box/upload-asset.sh github_api_token=$GITHUB_TOKEN owner=giansalex repo=sufel-rest tag=$TRAVIS_TAG filename=$ZIP_ASSET
