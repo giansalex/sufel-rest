@@ -1,6 +1,6 @@
 <?php
 
-function createDb($dbName)
+function createDb($host, $dbName)
 {
     $check = function (PDO $obj) {
         if ($obj->errorCode() != '0000') {
@@ -9,7 +9,7 @@ function createDb($dbName)
         }
     };
     $tablesSql = file_get_contents(__DIR__ . '/../../schema/schema.sql');
-    $pdo = new PDO('mysql:host=127.0.0.1;dbname=mysql', 'root', '');
+    $pdo = new PDO('mysql:host='.$host.';dbname=mysql', 'root', '');
     $result = $pdo->query("SELECT 1 FROM INFORMATION_SCHEMA.SCHEMATA d WHERE d.SCHEMA_NAME = '$dbName'");
     $result->execute();
     if ($result->fetchColumn()) {
@@ -19,11 +19,12 @@ function createDb($dbName)
     }
     $pdo->exec("CREATE DATABASE $dbName DEFAULT CHARACTER SET utf8;");
     $check($pdo);
-    $pdo = new PDO('mysql:host=127.0.0.1;dbname='.$dbName, 'root', '');
+    $pdo = new PDO('mysql:host='.$host.';dbname='.$dbName, 'root', '');
     $pdo->exec($tablesSql);
     $check($pdo);
 
-    echo $dbName.' completado!!!.';
+    echo $dbName.' completado!!!.'.PHP_EOL;
 }
 
-createDb('sufel_dev');
+$host = getenv('SUFEL_DB_HOST') ?: '127.0.0.1';
+createDb($host, 'sufel_dev');

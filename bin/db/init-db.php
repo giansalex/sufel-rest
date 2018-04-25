@@ -3,6 +3,8 @@ $ruc = '20000000001';
 $ruc2 = '20484433359';
 $password = '123456';
 
+$host = getenv('SUFEL_DB_HOST') ?: '127.0.0.1';
+
 $password = password_hash($password, PASSWORD_BCRYPT);
 
 $check = function (PDO $obj) {
@@ -12,7 +14,7 @@ $check = function (PDO $obj) {
     }
 };
 
-$pdo = new PDO('mysql:host=127.0.0.1;dbname=sufel_dev', 'root', '');
+$pdo = new PDO('mysql:host='.$host.';dbname=sufel_dev', 'root', '');
 $pdo->exec("INSERT INTO company(ruc, nombre, password, enable) VALUES('$ruc', 'EMPRESA SAC', '$password', 1)");
 $check($pdo);
 $pdo->exec("INSERT INTO client(documento, nombres, password) VALUES('$ruc2', 'CLIENTE SAC', '$password')");
