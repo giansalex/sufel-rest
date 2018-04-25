@@ -27,17 +27,9 @@ class ClientProfileTest extends \PHPUnit_Framework_TestCase
         $this->service = $app->getContainer()->get(ClientProfile::class);
     }
 
-    public function testPasswordNotMatch()
-    {
-        list($result, $message) = $this->service->changePassword('20484433359', '12345', 'abc', 'jklm');
-
-        $this->assertFalse($result);
-        $this->assertEquals('Las contraseñas no coinciden', $message);
-    }
-
     public function testPasswordInvalid()
     {
-        list($result, $message) = $this->service->changePassword('20484433359', '12345678', 'abc123', 'abc123');
+        list($result, $message) = $this->service->changePassword('20484433359', '12345678', 'abc123');
 
         $this->assertFalse($result);
         $this->assertEquals('La contraseña original no es la correcta', $message);
@@ -46,7 +38,7 @@ class ClientProfileTest extends \PHPUnit_Framework_TestCase
 
     public function testChangePassword()
     {
-        list($result, $message) = $this->service->changePassword('20484433359', '123456', '123456', '123456');
+        list($result, $message) = $this->service->changePassword('20484433359', '123456', '123456');
 
         $this->assertTrue($result);
     }

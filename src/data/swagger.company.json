@@ -21,7 +21,7 @@
     "https"
   ],
   "paths": {
-    "/company": {
+    "/companies": {
       "post": {
         "tags": [
           "company"
