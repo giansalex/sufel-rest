@@ -25,7 +25,7 @@ script:
 
 after_success:
   - |
-    if [ -n "$TRAVIS_TAG" ]; then
+    if [ -n "$TRAVIS_TAG" ] && [ $(phpenv version-name) = "7.0" ]; then
       chmod +x ./bin/box/deploy.sh
       chmod +x ./bin/box/box_build.sh
       chmod +x ./bin/box/upload-asset.sh
