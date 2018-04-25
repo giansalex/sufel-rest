@@ -66,7 +66,7 @@ class ExternalFileController
             }
         }
 
-        $response->getBody()->write($result['file']);
+        $response->getBody()->write($result->getData()['file']);
 
         return $response;
     }
