@@ -46,11 +46,13 @@ class SecureController
         if (!Validator::existFields($params, ['emisor', 'tipo', 'documento', 'fecha', 'total'])) {
             return $response->withStatus(400);
         }
+        $doc = explode('-', $params['documento']);
 
         $login = new DocumentLogin();
         $login->setEmisor($params['emisor'])
             ->setTipo($params['tipo'])
-            ->setCorrelativo($params['documento'])
+            ->setSerie($doc[0])
+            ->setCorrelativo($doc[1])
             ->setFecha(new \DateTime($params['fecha']))
             ->setTotal(floatval($params['total']));
 
