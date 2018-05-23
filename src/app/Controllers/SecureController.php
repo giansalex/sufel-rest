@@ -52,7 +52,7 @@ class SecureController
             ->setTipo($params['tipo'])
             ->setCorrelativo($params['documento'])
             ->setFecha(new \DateTime($params['fecha']))
-            ->setTotal(floatval($params['totel']));
+            ->setTotal(floatval($params['total']));
 
         $result = $this->api->client($login);
 
