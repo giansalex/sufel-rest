@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0dde22c760797b28153c42f7b77f7aff",
+    "content-hash": "e329ef4ef0bd94194b0e213c334eeb24",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -138,16 +138,16 @@
         },
         {
             "name": "giansalex/sufel",
-            "version": "v3.1.0",
+            "version": "v3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giansalex/sufel.git",
-                "reference": "fef1d0c607b8a6c992fe0e0fb66ff2d6ab5a3994"
+                "reference": "ef1fac0d67a18e391b7bcf3c1fe8381ffa30c0aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giansalex/sufel/zipball/fef1d0c607b8a6c992fe0e0fb66ff2d6ab5a3994",
-                "reference": "fef1d0c607b8a6c992fe0e0fb66ff2d6ab5a3994",
+                "url": "https://api.github.com/repos/giansalex/sufel/zipball/ef1fac0d67a18e391b7bcf3c1fe8381ffa30c0aa",
+                "reference": "ef1fac0d67a18e391b7bcf3c1fe8381ffa30c0aa",
                 "shasum": ""
             },
             "require": {
@@ -184,7 +184,7 @@
                 "facturacion-electronica",
                 "sufel"
             ],
-            "time": "2018-12-29T22:41:15+00:00"
+            "time": "2019-01-16T22:09:58+00:00"
         },
         {
             "name": "katzgrau/klogger",
