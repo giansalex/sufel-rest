@@ -71,7 +71,7 @@ $container[PdoErrorLogger::class] = function ($c) {
 };
 
 $container[DbConnection::class] = function ($c) {
-    return new DbConnection($c->get('settings')['db'], $c->get(PdoErrorLogger::class));
+    return new DbConnection($c->get('settings')['db'], $c->get('logger'), $c->get(PdoErrorLogger::class));
 };
 
 $container[CompanyRepository::class] = function ($c) {
