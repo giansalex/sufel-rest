@@ -10,4 +10,6 @@ Dockerfile export-ignore
 box.json export-ignore
 *.xml export-ignore
 *.md export-ignore
+phpunit.xml.dist export-ignore
 /run.sh export-ignore
+.whitesource export-ignore
