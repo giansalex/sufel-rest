@@ -199,7 +199,7 @@ $container[SecureController::class] = function ($c) {
         $c->get('settings')['jwt']['secret'],
         $c->get(DocumentRepository::class),
         $c->get(CompanyRepository::class),
-        $c->get(DocumentConverter::class)
+        $c->get(TokenServiceInterface::class)
     );
 
     return new SecureController($api);
