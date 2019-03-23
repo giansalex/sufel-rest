@@ -138,16 +138,16 @@
         },
         {
             "name": "giansalex/sufel",
-            "version": "v4.0.0",
+            "version": "v4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giansalex/sufel.git",
-                "reference": "1e06992d7d4cf246b9cba7f5ef96a3151a03d09e"
+                "reference": "2c80b5ad0492e33c3a9a2fb84a899fffa09e7464"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giansalex/sufel/zipball/1e06992d7d4cf246b9cba7f5ef96a3151a03d09e",
-                "reference": "1e06992d7d4cf246b9cba7f5ef96a3151a03d09e",
+                "url": "https://api.github.com/repos/giansalex/sufel/zipball/2c80b5ad0492e33c3a9a2fb84a899fffa09e7464",
+                "reference": "2c80b5ad0492e33c3a9a2fb84a899fffa09e7464",
                 "shasum": ""
             },
             "require": {
@@ -186,7 +186,7 @@
                 "facturacion-electronica",
                 "sufel"
             ],
-            "time": "2019-03-23T01:21:58+00:00"
+            "time": "2019-03-23T16:37:41+00:00"
         },
         {
             "name": "katzgrau/klogger",
@@ -1985,6 +1985,7 @@
                 "mock",
                 "xunit"
             ],
+            "abandoned": true,
             "time": "2017-06-30T09:13:00+00:00"
         },
         {
