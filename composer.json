@@ -19,9 +19,7 @@
         "katzgrau/klogger": "^1.2",
         "tuupola/slim-jwt-auth": "^2.3",
         "tuupola/cors-middleware": "^0.5.2",
-        "ext-zip": "*",
-        "ext-pdo_mysql": "*",
-        "giansalex/sufel": "^3.2"
+        "giansalex/sufel": "^4.0"
     },
     "require-dev": {
         "phpunit/phpunit": ">=4.8 < 6.0",
