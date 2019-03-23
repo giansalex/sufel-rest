@@ -1,8 +1,9 @@
 {
   "name": "giansalex/sufel-rest",
-  "description": "A REST API para consulta de comprobantes electronicos",
+  "description": "REST API para consulta de comprobantes electronicos",
   "keywords": [
     "rest",
+    "cpe",
     "facturacion-electronica"
   ],
   "homepage": "http://github.com/giansalex/sufel",
