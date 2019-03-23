@@ -65,7 +65,7 @@ $container[LinkGenerator::class] = function ($c) {
 };
 
 $container[PathResolver::class] = function ($c) {
-    return new PathResolver($c);
+    return new PathResolver($c->get('request'));
 };
 
 $container[PdoErrorLogger::class] = function ($c) {
