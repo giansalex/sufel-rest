@@ -138,8 +138,8 @@ $container[ClientController::class] = function ($c) {
     $api = new \Sufel\App\Controllers\ClientApi(
         $c->get(ClienteRepository::class),
         $c->get(DocumentFilterRepository::class),
-        $c->get(DocumentRepository::class),
         $c->get(FileRepository::class),
+        $c->get(DocumentRepository::class),
         $c->get(DocumentConverter::class)
     );
 
