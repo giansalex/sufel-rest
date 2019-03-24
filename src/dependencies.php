@@ -11,6 +11,7 @@ use Sufel\App\Controllers\CompanyController;
 use Sufel\App\Controllers\DocumentController;
 use Sufel\App\Controllers\ExternalFileController;
 use Sufel\App\Controllers\SecureController;
+use Sufel\App\Models\DocumentConverter;
 use Sufel\App\Repository\ClienteRepository;
 use Sufel\App\Repository\ClientProfileRepository;
 use Sufel\App\Repository\CompanyRepository;
@@ -24,6 +25,7 @@ use Sufel\App\Service\ClientProfile;
 use Sufel\App\Service\CryptoService;
 use Sufel\App\Service\LinkGenerator;
 use Sufel\App\Service\RouterBuilderInterface;
+use Sufel\App\Service\TokenServiceInterface;
 use Sufel\App\Service\UserValidateInterface;
 use Sufel\App\Services\PathResolver;
 use Sufel\App\Utils\PdoErrorLogger;
@@ -63,7 +65,7 @@ $container[LinkGenerator::class] = function ($c) {
 };
 
 $container[PathResolver::class] = function ($c) {
-    return new PathResolver($c);
+    return new PathResolver($c->get('request'));
 };
 
 $container[PdoErrorLogger::class] = function ($c) {
@@ -91,11 +93,19 @@ $container[ClientProfileRepository::class] = function ($c) {
 };
 
 $container[FileRepository::class] = function ($c) {
-    return new FileRepository($c->get('settings')['upload_dir'], $c->get(DocumentRepository::class));
+    return new FileRepository($c->get('settings')['upload_dir']);
 };
 
 $container[QueryJoiner::class] = function () {
     return new QueryJoiner();
+};
+
+$container[DocumentConverter::class] = function () {
+    return new DocumentConverter();
+};
+
+$container[TokenServiceInterface::class] = function () {
+    return new \Sufel\App\Services\TokenProvider();
 };
 
 $container[DocumentFilterRepository::class] = function ($c) {
@@ -128,8 +138,9 @@ $container[ClientController::class] = function ($c) {
     $api = new \Sufel\App\Controllers\ClientApi(
         $c->get(ClienteRepository::class),
         $c->get(DocumentFilterRepository::class),
+        $c->get(FileRepository::class),
         $c->get(DocumentRepository::class),
-        $c->get(FileRepository::class)
+        $c->get(DocumentConverter::class)
     );
 
     return new ClientController($api);
@@ -142,7 +153,11 @@ $container[ClientProfileController::class] = function ($c) {
 };
 
 $container[ClientSecureController::class] = function ($c) {
-    $api = new \Sufel\App\Controllers\ClientSecureApi($c->get('settings')['jwt']['secret'], $c->get(AuthClient::class));
+    $api = new \Sufel\App\Controllers\ClientSecureApi(
+        $c->get('settings')['jwt']['secret'],
+        $c->get(AuthClient::class),
+        $c->get(TokenServiceInterface::class)
+    );
 
     return new ClientSecureController($api);
 };
@@ -159,19 +174,33 @@ $container[CompanyController::class] = function ($c) {
 };
 
 $container[DocumentController::class] = function ($c) {
-    $api = new \Sufel\App\Controllers\DocumentApi($c->get(DocumentRepository::class), $c->get(FileRepository::class));
+    $api = new \Sufel\App\Controllers\DocumentApi(
+        $c->get(DocumentRepository::class),
+        $c->get(FileRepository::class),
+        $c->get(DocumentConverter::class)
+    );
 
     return new DocumentController($api);
 };
 
 $container[ExternalFileController::class] = function ($c) {
-    $api = new \Sufel\App\Controllers\ExternalFileApi($c->get(CryptoService::class), $c->get(DocumentRepository::class), $c->get(FileRepository::class));
+    $api = new \Sufel\App\Controllers\ExternalFileApi(
+        $c->get(CryptoService::class),
+        $c->get(DocumentRepository::class),
+        $c->get(FileRepository::class),
+        $c->get(DocumentConverter::class)
+    );
 
     return new ExternalFileController($api);
 };
 
 $container[SecureController::class] = function ($c) {
-    $api = new \Sufel\App\Controllers\SecureApi($c->get('settings')['jwt']['secret'], $c->get(DocumentRepository::class), $c->get(CompanyRepository::class));
+    $api = new \Sufel\App\Controllers\SecureApi(
+        $c->get('settings')['jwt']['secret'],
+        $c->get(DocumentRepository::class),
+        $c->get(CompanyRepository::class),
+        $c->get(TokenServiceInterface::class)
+    );
 
     return new SecureController($api);
 };

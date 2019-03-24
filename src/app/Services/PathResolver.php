@@ -8,7 +8,6 @@
 
 namespace Sufel\App\Services;
 
-use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
 
 /**
@@ -17,29 +16,25 @@ use Slim\Http\Request;
 class PathResolver
 {
     /**
-     * @var ContainerInterface
+     * @var Request
      */
-    private $container;
+    private $request;
 
     /**
-     * LinkGenerator constructor.
-     *
-     * @param ContainerInterface $container
+     * PathResolver constructor.
+     * @param Request $request
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(Request $request)
     {
-        $this->container = $container;
+        $this->request = $request;
     }
 
     /**
      * @return string
-     *
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function getFullBasePath()
     {
-        $uri = $this->getUri();
+        $uri = $this->request->getUri();
         $url = $uri->getHost();
         if ($uri->getPort() && $uri->getPort() !== 80) {
             $url .= ':'.$uri->getPort();
@@ -52,32 +47,15 @@ class PathResolver
 
     /**
      * @return string Port with domain
-     *
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function getBasePath()
     {
-        $uri = $this->getUri();
+        $uri = $this->request->getUri();
         $url = $uri->getScheme().'://'.$uri->getHost();
         if ($uri->getPort() && $uri->getPort() !== 80) {
             $url .= ':'.$uri->getPort();
         }
 
         return $url;
-    }
-
-    /**
-     * @return \Psr\Http\Message\UriInterface
-     *
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     */
-    private function getUri()
-    {
-        /** @var $request Request */
-        $request = $this->container->get('request');
-
-        return $request->getUri();
     }
 }
