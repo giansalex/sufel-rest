@@ -138,24 +138,25 @@
         },
         {
             "name": "giansalex/sufel",
-            "version": "v4.0.1",
+            "version": "v4.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giansalex/sufel.git",
-                "reference": "2c80b5ad0492e33c3a9a2fb84a899fffa09e7464"
+                "reference": "21abd2a3490bcc6b620baecbcd42714917390100"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giansalex/sufel/zipball/2c80b5ad0492e33c3a9a2fb84a899fffa09e7464",
-                "reference": "2c80b5ad0492e33c3a9a2fb84a899fffa09e7464",
+                "url": "https://api.github.com/repos/giansalex/sufel/zipball/21abd2a3490bcc6b620baecbcd42714917390100",
+                "reference": "21abd2a3490bcc6b620baecbcd42714917390100",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-json": "*",
-                "ext-pdo_mysql": "*",
+                "ext-pdo": "*",
                 "giansalex/peru-consult": "^2.0",
-                "php": ">=5.5.0"
+                "php": ">=5.5.0",
+                "psr/log": "^1.1"
             },
             "require-dev": {
                 "phpunit/phpunit": ">=4.8 < 6.0",
@@ -186,7 +187,7 @@
                 "facturacion-electronica",
                 "sufel"
             ],
-            "time": "2019-03-23T16:37:41+00:00"
+            "time": "2019-03-23T23:59:47+00:00"
         },
         {
             "name": "katzgrau/klogger",
