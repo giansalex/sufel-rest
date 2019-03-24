@@ -1,9 +1,8 @@
-/build/
-/vendor/
-/logs/*
-!/logs/README.md
-/.idea
-/box.phar
-/public/upload/
-!/public/upload/.htaccess
-/.php_cs.cache
+.idea/
+vendor/
+logs/*
+!logs/README.md
+public/upload/
+!public/upload/.htaccess
+.php_cs.cache
+box.phar
