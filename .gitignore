@@ -2,7 +2,7 @@
 vendor/
 logs/*
 !logs/README.md
-public/upload/
+public/upload/*
 !public/upload/.htaccess
 .php_cs.cache
 box.phar
