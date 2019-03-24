@@ -8,10 +8,9 @@
 
 namespace Sufel\App\Controllers;
 
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Router;
+use Slim\Interfaces\RouterInterface;
 use Sufel\App\Services\PathResolver;
 
 /**
@@ -20,18 +19,25 @@ use Sufel\App\Services\PathResolver;
 class HomeController
 {
     /**
-     * @var ContainerInterface
+     * @var PathResolver
      */
-    private $container;
+    private $pathResolver;
+
+    /**
+     * @var RouterInterface
+     */
+    private $router;
 
     /**
      * HomeController constructor.
      *
-     * @param ContainerInterface $container
+     * @param PathResolver    $pathResolver
+     * @param RouterInterface $router
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(PathResolver $pathResolver, RouterInterface $router)
     {
-        $this->container = $container;
+        $this->pathResolver = $pathResolver;
+        $this->router = $router;
     }
 
     /**
@@ -46,16 +52,10 @@ class HomeController
      */
     public function home($request, $response, $args)
     {
-        $gen = $this->container->get(PathResolver::class);
-        /** @var $router Router */
-        $router = $this->container->get('router');
-
-        $swaggerUrl = $gen->getBasePath().$router->pathFor('swagger');
+        $swaggerUrl = $this->pathResolver->getBasePath().$this->router->pathFor('swagger');
         $body = <<<HTML
-<h1>Welcome to SUFEL API</h1>
-<a href="http://petstore.swagger.io/?url=$swaggerUrl">Swagger API Full</a><br>
-<a href="http://petstore.swagger.io/?url=$swaggerUrl%3Ffor%3Dcompany">Swagger API for Company</a><br>
-<a href="http://petstore.swagger.io/?url=$swaggerUrl%3Ffor%3Dreceiver">Swagger API for Receiver</a>
+<h1>SUFEL API</h1>
+<a href="http://petstore.swagger.io/?url=$swaggerUrl">Swagger Docs</a><br>
 HTML;
 
         $response->getBody()->write($body);
@@ -75,22 +75,10 @@ HTML;
      */
     public function swagger($request, $response, $args)
     {
-        $params = $request->getQueryParams();
-        $type = isset($params['for']) ? $params['for'] : '';
-
-        $name = 'swagger';
-        if ($type &&
-            in_array(strtolower($type), ['company', 'receiver'])) {
-            $name .= '.'.strtolower($type);
-        }
-
-        $filename = __DIR__."/../../data/$name.json";
-        if (!file_exists($filename)) {
-            return $response->withStatus(404);
-        }
+        $filename = __DIR__.'/../../data/swagger.json';
         $jsonContent = file_get_contents($filename);
-        $gen = $this->container->get(PathResolver::class);
-        $response->getBody()->write(str_replace('sufel.net', $gen->getFullBasePath(), $jsonContent));
+        $response->getBody()
+                ->write(str_replace('sufel.net', $this->pathResolver->getFullBasePath(), $jsonContent));
 
         return $response->withHeader('Content-Type', 'application/json; charset=utf8');
     }
