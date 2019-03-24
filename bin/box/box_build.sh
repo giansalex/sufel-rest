@@ -11,9 +11,8 @@ else
     php ./bin/box/box.php $boxFile
     php -d phar.readonly=0 $boxFile build
 fi
-mkdir dist
-mkdir dist/upload
+mkdir -p dist/upload
 mv sufel.phar dist/sufel.phar
 cp public/.htaccess dist/.htaccess
+cp public/upload/.htaccess dist/upload/.htaccess
 cp box2/index.php dist/index.php
-cp box2/.htaccess dist/upload/.htaccess

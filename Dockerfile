@@ -26,8 +26,7 @@ VOLUME /var/www/html/public/upload
 
 WORKDIR /var/www/html
 
-RUN chmod -R 777 logs/ && \
-    chmod -R 777 public/upload/ && \
+RUN chmod -R 777 public/upload/ && \
     cp -f docker/.htaccess . && \
     cp -f docker/settings.php src/ && \
     composer install --no-interaction --no-dev --optimize-autoloader && \
