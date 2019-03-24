@@ -10,6 +10,7 @@ use Sufel\App\Controllers\ClientSecureController;
 use Sufel\App\Controllers\CompanyController;
 use Sufel\App\Controllers\DocumentController;
 use Sufel\App\Controllers\ExternalFileController;
+use Sufel\App\Controllers\HomeController;
 use Sufel\App\Controllers\SecureController;
 use Sufel\App\Models\DocumentConverter;
 use Sufel\App\Repository\ClienteRepository;
@@ -132,6 +133,10 @@ $container[AuthClient::class] = function ($c) {
 
 $container[ClientProfile::class] = function ($c) {
     return new ClientProfile($c->get(ClienteRepository::class), $c->get(ClientProfileRepository::class));
+};
+
+$container[HomeController::class] = function ($c) {
+    return new HomeController($c->get(PathResolver::class), $c->get('router'));
 };
 
 $container[ClientController::class] = function ($c) {
