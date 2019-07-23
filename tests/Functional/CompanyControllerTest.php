@@ -21,6 +21,10 @@ class CompanyControllerTest extends BaseTestCase
 
         $jwt = $this->getObject($response->getBody());
 
+        if (!isset($jwt->token)) {
+            $this->fail($jwt->message);
+        }
+
         self::$token = $jwt->token;
     }
 
